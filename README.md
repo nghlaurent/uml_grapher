@@ -1,7 +1,7 @@
 # Projet ESIEA 4A - Création de graphes UML
 
 [![build workflow](https://github.com/nghlaurent/uml_grapher/actions/workflows/build.yml/badge.svg)](https://github.com/nghlaurent/uml_grapher/actions)
-[![codecov](https://codecov.io/gh/nghlaurent/uml_grapher/branch/main/graph/badge.svg)](https://codecov.io/gh/nghlaurent/uml_grapher)
+[![codecov](https://codecov.io/gh/nghlaurent/uml_grapher/branch/main/graph/badge.svg?token=VLO57U8WPC)](https://codecov.io/gh/nghlaurent/uml_grapher)
 
 ## Build the project
 

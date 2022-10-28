@@ -9,69 +9,55 @@ import java.util.List;
 
 public class UmlRelation {
 
-    private final List<String[]> relationsList = new ArrayList<>();
+    private final List<String[]> relationList = new ArrayList<>();
 
-    public UmlRelation(UmlType type) {
-        getAllRelation(type);
+    public UmlRelation(UmlType umlType) {
+        getAllRelation(umlType);
     }
 
-    public void getAllRelation(UmlType uType) {
-        for (Class classe : uType.getTypeList()) {
-            getSuperClassRelation(classe);
-            getInstancesRelation(classe);
-            getMethodRelation(classe);
-            getFieldRelation(classe);
+    public void getAllRelation(UmlType umlType) {
+        for (Class classElement : umlType.getListOfClass()) {
+            getSuperClassRelation(classElement);
+            getInstancesRelation(classElement);
+            getMethodRelation(classElement);
+            getFieldRelation(classElement);
         }
     }
 
-    private void getSuperClassRelation(Class classe) {
-        Class superClass = classe.getSuperclass();
-
+    private void getSuperClassRelation(Class classElement) {
+        Class superClass = classElement.getSuperclass();
         if (superClass != null && !superClass.getSimpleName().equals("Object")) {
-            String[] tab = {superClass.getSimpleName(), classe.getSimpleName(), "extends"};
-            this.relationsList.add(tab);
+            this.relationList.add(new String[] {superClass.getSimpleName(), classElement.getSimpleName(), "extends"});
         }
     }
 
-    private void getInstancesRelation(Class classe) {
-        String type;
-
-        for (Class inter : classe.getInterfaces()) {
-            if (!Modifier.isInterface(classe.getModifiers())) {
-                type = "implements";
-            } else {
-                type = "extends";
-            }
-
-            String[] tab = {inter.getSimpleName(), classe.getSimpleName(), type};
-
-            this.relationsList.add(tab);
-        }
-    }
-
-    private void getMethodRelation(Class classe) {
-        for (Method method : classe.getDeclaredMethods()) {
-            if (!method.getReturnType().getName().startsWith("java.") && !method.getReturnType().getName().equals("void") && !method.isSynthetic()) {
-                String[] tab = {method.getReturnType().getSimpleName(), classe.getSimpleName(), "returns"};
-                this.relationsList.add(tab);
-            }
-        }
-    }
-    
-    private void getFieldRelation(Class classe) {
-        for (Field field : classe.getDeclaredFields()) {
+    private void getFieldRelation(Class classElement) {
+        for (Field field : classElement.getDeclaredFields()) {
             if (!field.getType().getName().startsWith("java.") && !field.isSynthetic()) {
-                String[] tab = {field.getType().getSimpleName(), classe.getSimpleName(), "returns"};
-
-                if (this.relationsList.stream().filter(t -> Arrays.deepEquals(t, tab)).toList().isEmpty()) {
-                    tab[2] = "uses";
-                    this.relationsList.add(tab);
+                String[] array = new String[] {field.getType().getSimpleName(), classElement.getSimpleName(), "returns"};
+                if (this.relationList.stream().filter(t -> Arrays.deepEquals(t, array)).toList().isEmpty()) {
+                    array[2] = "uses";
+                    this.relationList.add(array);
                 }
             }
         }
     }
 
-    public List<String[]> getRelationsList() {
-        return this.relationsList;
+    private void getInstancesRelation(Class classElement) {
+        for (Class interfaceElement : classElement.getInterfaces()) {
+            this.relationList.add(new String[] {interfaceElement.getSimpleName(), classElement.getSimpleName(), !Modifier.isInterface(classElement.getModifiers()) ? "implements" : "extends"});
+        }
+    }
+
+    private void getMethodRelation(Class classElement) {
+        for (Method method : classElement.getDeclaredMethods()) {
+            if (!method.getReturnType().getName().startsWith("java.") && !method.getReturnType().getName().equals("void") && !method.isSynthetic()) {
+                this.relationList.add(new String[] {method.getReturnType().getSimpleName(), classElement.getSimpleName(), "returns"});
+            }
+        }
+    }
+
+    public List<String[]> getRelationList() {
+        return this.relationList;
     }
 }

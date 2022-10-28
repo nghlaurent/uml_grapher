@@ -1,19 +1,25 @@
 package fr.lernejo;
 
-import fr.lernejo.umlgrapher.*;
-
+import fr.lernejo.umlgrapher.GraphType;
+import fr.lernejo.umlgrapher.Launcher;
+import fr.lernejo.umlgrapher.UmlGraph;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class UmlGraphTests {
+class UmlGraphTests {
+
+    @Test
+    void launcher_main_test() {
+        new Launcher();
+    }
+
     @Test
     void empty_interface_with_no_relation() {
-        Class[] classes = new Class[]{Machin.class};
-        UmlGraph graph = new UmlGraph(classes);
+        Class[] classList = new Class[]{Machin.class};
+        UmlGraph umlGraph = new UmlGraph(classList);
+        String umlCreation = umlGraph.as(GraphType.Mermaid);
 
-        String output = graph.as(GraphType.Mermaid);
-
-        Assertions.assertThat(output).isEqualTo("""
+        Assertions.assertThat(umlCreation).isEqualTo("""
             classDiagram
             class Machin {
                 <<interface>>
@@ -23,13 +29,11 @@ public class UmlGraphTests {
 
     @Test
     void interface_with_relation() {
-        Class[] classes = new Class[]{Living.Animal.Ant.class, Living.Animal.Cat.class, Living.Plant.Tree.Alder.class};
+        Class[] classList = new Class[]{Living.Animal.Ant.class, Living.Animal.Cat.class, Living.Plant.Tree.Alder.class};
+        UmlGraph umlGraph = new UmlGraph(classList);
+        String umlCreation = umlGraph.as(GraphType.Mermaid);
 
-        UmlGraph graph = new UmlGraph(classes);
-
-        String output = graph.as(GraphType.Mermaid);
-
-        Assertions.assertThat(output).isEqualTo("""
+        Assertions.assertThat(umlCreation).isEqualTo("""
             classDiagram
             class Alder
             class Animal {
@@ -56,18 +60,12 @@ public class UmlGraphTests {
     }
 
     @Test
-    void launcher_run() {
-        new Launcher();
-    }
-
-    @Test
     void class_with_one_member_test() {
-        Class[] classes = new Class[]{Singleton.class};
-        UmlGraph graph = new UmlGraph(classes);
+        Class[] classList = new Class[]{Singleton.class};
+        UmlGraph umlGraph = new UmlGraph(classList);
+        String umlCreation = umlGraph.as(GraphType.Mermaid);
 
-        String output = graph.as(GraphType.Mermaid);
-
-        Assertions.assertThat(output).isEqualTo("""
+        Assertions.assertThat(umlCreation).isEqualTo("""
             classDiagram
             class Singleton {
                 -Singleton instance$
@@ -80,12 +78,11 @@ public class UmlGraphTests {
 
     @Test
     void many_class_with_field_test() {
-        Class[] classes = new Class[]{Image.class};
-        UmlGraph graph = new UmlGraph(classes);
+        Class[] classList = new Class[]{Image.class};
+        UmlGraph umlGraph = new UmlGraph(classList);
+        String umlCreation = umlGraph.as(GraphType.Mermaid);
 
-        String output = graph.as(GraphType.Mermaid);
-
-        Assertions.assertThat(output).isEqualTo("""
+        Assertions.assertThat(umlCreation).isEqualTo("""
             classDiagram
             class Image {
                 <<interface>>
@@ -130,11 +127,9 @@ public class UmlGraphTests {
     public static class Singleton {
 
         private static final Singleton instance = new UmlGraphTests.Singleton();
-
         public static Singleton getInstance() {
             return instance;
         }
-
         public String supplySomeStr(int offset) {
             return String.valueOf(43 + offset);
         }
