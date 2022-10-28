@@ -52,7 +52,7 @@ public class UmlRelation {
     private void getMethodRelation(Class classe) {
         for (Method method : classe.getDeclaredMethods()) {
             if (!method.getReturnType().getName().startsWith("java.") && !method.getReturnType().getName().equals("void") && !method.isSynthetic()) {
-                String[] tab = {method.getReturnType().getSimpleName(), classe.getSimpleName(), "return"};
+                String[] tab = {method.getReturnType().getSimpleName(), classe.getSimpleName(), "returns"};
                 this.relationsList.add(tab);
             }
         }
@@ -61,7 +61,7 @@ public class UmlRelation {
     private void getFieldRelation(Class classe) {
         for (Field field : classe.getDeclaredFields()) {
             if (!field.getType().getName().startsWith("java.") && !field.isSynthetic()) {
-                String[] tab = {field.getType().getSimpleName(), classe.getSimpleName(), "return"};
+                String[] tab = {field.getType().getSimpleName(), classe.getSimpleName(), "returns"};
 
                 if (this.relationsList.stream().filter(t -> Arrays.deepEquals(t, tab)).toList().isEmpty()) {
                     tab[2] = "uses";

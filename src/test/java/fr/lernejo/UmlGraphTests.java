@@ -60,6 +60,53 @@ public class UmlGraphTests {
         new Launcher();
     }
 
+    @Test
+    void class_with_one_member_test() {
+        Class[] classes = new Class[]{Singleton.class};
+        UmlGraph graph = new UmlGraph(classes);
+
+        String output = graph.as(GraphType.Mermaid);
+
+        Assertions.assertThat(output).isEqualTo("""
+            classDiagram
+            class Singleton {
+                -Singleton instance$
+                +getInstance()$ Singleton
+                +supplySomeStr(int offset) String
+            }
+            Singleton <-- Singleton : returns
+            """);
+    }
+
+    @Test
+    void many_class_with_field_test() {
+        Class[] classes = new Class[]{Image.class};
+        UmlGraph graph = new UmlGraph(classes);
+
+        String output = graph.as(GraphType.Mermaid);
+
+        Assertions.assertThat(output).isEqualTo("""
+            classDiagram
+            class Image {
+                <<interface>>
+                +display()* void
+            }
+            class LazyLoadedImage {
+                -RealImage realImage
+                -String fileName
+                +display() void
+            }
+            class RealImage {
+                -String fileName
+                +display() void
+                -loadFromDisk(String fileName) void
+            }
+            Image <|.. LazyLoadedImage : implements
+            RealImage <-- LazyLoadedImage : uses
+            Image <|.. RealImage : implements
+            """);
+    }
+
     interface Machin {
     }
 
@@ -76,6 +123,61 @@ public class UmlGraphTests {
             sealed interface Tree extends Plant {
                 final class Alder implements Tree {
                 }
+            }
+        }
+    }
+
+    public static class Singleton {
+
+        private static final Singleton instance = new UmlGraphTests.Singleton();
+
+        public static Singleton getInstance() {
+            return instance;
+        }
+
+        public String supplySomeStr(int offset) {
+            return String.valueOf(43 + offset);
+        }
+    }
+
+    public sealed interface Image {
+
+        void display();
+
+        final class RealImage implements Image {
+
+            private final String fileName;
+
+            public RealImage(String fileName){
+                this.fileName = fileName;
+                loadFromDisk(fileName);
+            }
+
+            @Override
+            public void display() {
+                System.out.println("Displaying " + fileName);
+            }
+
+            private void loadFromDisk(String fileName){
+                System.out.println("Loading " + fileName);
+            }
+        }
+
+        final class LazyLoadedImage implements Image{
+
+            private RealImage realImage;
+            private final String fileName;
+
+            public LazyLoadedImage(String fileName){
+                this.fileName = fileName;
+            }
+
+            @Override
+            public void display() {
+                if(realImage == null){
+                    realImage = new RealImage(fileName);
+                }
+                realImage.display();
             }
         }
     }

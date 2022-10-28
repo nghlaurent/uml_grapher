@@ -36,6 +36,7 @@ public class UmlType {
         Set<Class<?>> subTypes = reflections.get(Scanners.SubTypes.get(classe).asClass(this.getClass().getClassLoader(), classe.getClassLoader()));
 
         for (Class classeType : subTypes) {
+            getAllChild(classeType);
             if (!this.typeList.contains(classeType)) {
                 this.typeList.add(classeType);
             }
