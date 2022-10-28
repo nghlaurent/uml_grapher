@@ -1,7 +1,6 @@
 package fr.lernejo.umlgrapher;
 
 import picocli.CommandLine;
-import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 import java.util.concurrent.Callable;
@@ -26,6 +25,10 @@ public class Launcher implements Callable<Integer> {
     }
 
     public static void main(String... args) {
-        System.exit(new CommandLine(new Launcher()).execute(args));
+        try {
+            System.exit(new CommandLine(new Launcher()).execute(args));
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
     }
 }
